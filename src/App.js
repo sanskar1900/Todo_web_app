@@ -1,24 +1,84 @@
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
+import Navbar from "./Components/Navbar";
+import Todo from "./Components/Todo";
+import TodoItems from "./Components/TodoItems";
+import { useState, useEffect } from "react";
+import ReactDOM from "react-dom/client";
+import AddTodo from "./Components/AddTodo";
+import About from "./Components/About";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+
+function App() { var initTodo;
+  if(localStorage.getItem("todos")===null)
+  {
+    initTodo=[];
+  }
+  else
+  {
+    initTodo=JSON.parse(localStorage.getItem("todos"));
+  }
+  const onDelete=(todo)=>{
+    console.log("I am deleted of todo" , todo);
+    setTodos(todos.filter((e)=>{
+      return e!==todo
+    }))
+    localStorage.getItem("todos",JSON.stringify(todos));
+  }
+  const [todos,setTodos]=useState(initTodo);
+  useEffect(() => {
+    localStorage.setItem("todos",JSON.stringify(todos));
+  }, [todos])
+  const addTodo=(title,disc)=>{
+    // const sno= todos[todos.length-1].sno+1;
+    const myTodo={
+      // sno:sno,
+      title:title,
+
+      disc:disc
+  };
+  console.log(myTodo);
+  setTodos([...todos,myTodo]);
+   
+ 
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    <Router>
+    <Navbar title={"MY TODO"}/>
+
+    <Switch>
+          <Route exact path="/" render={()=>{
+            return(
+              <>
+                  <AddTodo addTodo={addTodo}/>
+  <Todo todos={todos} onDelete={onDelete} sno={todos.length}/>
+              </>)
+            
+          }}>
+           </Route>
+
+           <Route exact path="/about" render={()=>{
+            return(
+              <>
+              <About/>
+              </>)
+            
+          }}>
+           </Route>
+        
+          
+        </Switch>
+ 
+  {/* <TodoItems/> */}
+ 
+    </Router>
+  
+   </>
   );
 }
 
